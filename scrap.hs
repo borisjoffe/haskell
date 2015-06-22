@@ -1,5 +1,36 @@
 #!/usr/bin/runhaskell
 
+-- Chapter 3 Part 2
+-------------------
+
+-- Ex5
+isPalindrome list =
+	case list of
+	[]       -> True
+	[x]      -> True
+	(x : xs) ->
+		x == last xs
+		&&
+		isPalindrome allButFirstAndLast
+		--isPalindrome (tail allButLast)
+		where
+			allButFirstAndLast = tail allButLast
+			allButLast = take (len - 1) xs
+			len = length xs
+
+-- Ex4
+palindrome xs = xs ++ reverse xs
+
+-- Ex3
+myMean :: [Double] -> Double
+myMean xs = sum xs / fromIntegral (length xs)
+
+-- Ex1 - 2
+myLength :: [a] -> Int
+myLength [] = 0
+myLength (x : xs) = 1 + myLength xs
+
+
 -- Chapter 3 Part 1
 -------------------
 -- file: ch03/ListADT.hs
