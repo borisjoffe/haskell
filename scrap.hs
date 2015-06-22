@@ -48,4 +48,7 @@ data BookReview = BookReview Book CustomerId ReviewBody
 -------------------
 
 secondToLast :: [a] -> a
-secondToLast xs = head (drop 1 (reverse (xs)))
+secondToLast xs =
+	if length xs < 2
+	then error ("xs must have length of 2 or more but had length: " ++ show (length xs))
+	else head (drop 1 (reverse (xs)))
