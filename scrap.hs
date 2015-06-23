@@ -12,10 +12,9 @@ isPalindrome list =
 		x == last xs
 		&&
 		isPalindrome allButFirstAndLast
-		--isPalindrome (tail allButLast)
 		where
-			allButFirstAndLast = tail allButLast
-			allButLast = take (len - 1) xs
+			allButFirstAndLast = drop (len - 1) allButLast
+			allButLast         = take (len - 1) xs
 			len = length xs
 
 -- Ex4
