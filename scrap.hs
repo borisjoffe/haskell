@@ -4,6 +4,13 @@
 -------------------
 import Data.List
 
+-- Ex 7
+myIntersperse :: a -> [[a]] -> [a]
+myIntersperse separator []       = []
+myIntersperse separator [x]      = x
+myIntersperse separator (x : xs) = x ++ [separator] ++ (myIntersperse separator xs)
+
+
 -- Ex 6
 sortByListLength :: [[a]] -> [[a]]
 sortByListLength list = sortBy compareListLength list
