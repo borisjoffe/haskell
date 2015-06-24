@@ -2,6 +2,15 @@
 
 -- Chapter 3 Part 2
 -------------------
+import Data.List
+
+-- Ex 6
+sortByListLength :: [[a]] -> [[a]]
+sortByListLength list = sortBy compareListLength list
+
+compareListLength :: [a] -> [a] -> Ordering
+compareListLength xs ys = compare (length xs) (length ys)
+
 
 -- Ex5
 isPalindrome list =
