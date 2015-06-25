@@ -5,10 +5,21 @@
 import Data.List
 
 -- Ex 7
-myIntersperse :: a -> [[a]] -> [a]
+myIntersperse :: [a] -> [[a]] -> [a]
 myIntersperse separator []       = []
 myIntersperse separator [x]      = x
-myIntersperse separator (x : xs) = x ++ [separator] ++ (myIntersperse separator xs)
+myIntersperse separator (x : xs) = x ++ separator ++ (myIntersperse separator xs)
+
+-- mini test framework
+assert x y
+	| x /= y    = error "x is not equal to y | (x,y) = " ++ show x ++ "," ++ show y; ()
+	| otherwise = ()
+
+testMyIntersperse =
+	do
+		assert (myIntersperse "," []) []
+		assert (myIntersperse "," ["a"]) "a"
+		assert (myIntersperse "," ["abc","def"]) "abc,def"
 
 
 -- Ex 6
