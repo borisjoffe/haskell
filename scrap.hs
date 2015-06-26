@@ -10,16 +10,25 @@ myIntersperse separator []       = []
 myIntersperse separator [x]      = x
 myIntersperse separator (x : xs) = x ++ separator ++ (myIntersperse separator xs)
 
--- mini test framework
-assert x y
-	| x /= y    = error "x is not equal to y | (x,y) = " ++ show x ++ "," ++ show y; ()
-	| otherwise = ()
-
 testMyIntersperse =
 	do
 		assert (myIntersperse "," []) []
 		assert (myIntersperse "," ["a"]) "a"
 		assert (myIntersperse "," ["abc","def"]) "abc,def"
+
+-- mini test framework
+assert :: (Eq a, Show a) => a -> a -> IO ()
+assert actual expected =
+	if actual /= expected
+	then putStrLn ("\nERROR: Expected: " ++ show expected ++ " but got: " ++ show actual)
+	else putStr "."
+
+test :: IO a -> IO ()
+test func =
+	do
+		func
+		putStr "\n"
+-- end test framework
 
 
 -- Ex 6
