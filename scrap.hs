@@ -4,6 +4,30 @@
 -------------------
 import Data.List
 
+-- Ex 8
+data MyTree a = MyNode a (MyTree a) (MyTree a)
+            | Empty
+			  deriving (Show)
+
+treeHeight :: MyTree t -> Int
+treeHeight Empty = 0
+treeHeight (MyNode n leftTree rightTree) =
+	1 + max (treeHeight leftTree) (treeHeight rightTree)
+
+testTreeHeight =
+	do
+		assert (treeHeight Empty)                     0
+		assert (treeHeight leaf)                      1
+		assert (treeHeight onlyLeft)                  2
+		assert (treeHeight onlyRight)                 2
+		assert (treeHeight both)                      2
+		assert (treeHeight (MyNode 5 onlyLeft Empty)) 3
+		where
+			leaf      = MyNode 5 Empty Empty
+			onlyLeft  = MyNode 5 leaf Empty
+			onlyRight = MyNode 5 Empty leaf
+			both      = MyNode 5 leaf leaf
+
 -- Ex 7
 myIntersperse :: [a] -> [[a]] -> [a]
 myIntersperse separator []       = []
