@@ -4,6 +4,14 @@
 -------------------
 import Data.List
 
+-- Ex 9 - 12
+data Point p = Point {
+		  xCoord :: Int
+		, yCoord :: Int
+	} deriving (Show, Eq)
+
+data Direction d = TurnsLeft | TurnsRight | StraightLine
+
 -- Ex 8
 data MyTree a = MyNode a (MyTree a) (MyTree a)
             | Empty
