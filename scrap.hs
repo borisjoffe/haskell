@@ -5,12 +5,22 @@
 import Data.List
 
 -- Ex 9 - 12
+
+-- Ex 9
 data Point p = Point {
 		  xCoord :: Int
 		, yCoord :: Int
 	} deriving (Show, Eq)
 
 data Direction d = TurnsLeft | TurnsRight | StraightLine
+	deriving (Show)
+
+-- Ex 10
+getDirection :: Point a -> Point b -> Point c -> Direction d
+getDirection (Point x_a y_a) (Point x_b y_b) (Point x_c y_c)
+	| x_a < x_c  = TurnsRight
+	| x_a > x_c  = TurnsLeft
+	| x_a == x_c = StraightLine
 
 -- Ex 8
 data MyTree a = MyNode a (MyTree a) (MyTree a)
