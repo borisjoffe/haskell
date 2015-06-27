@@ -22,6 +22,17 @@ getDirection (Point x_a y_a) (Point x_b y_b) (Point x_c y_c)
 	| x_a > x_c  = TurnsLeft
 	| x_a == x_c = StraightLine
 
+-- Ex 11
+nth :: Int -> [a] -> a
+nth num xs = head (drop num xs)
+
+getAllDirections :: [Point a] -> [Direction d]
+getAllDirections ps =
+	if length ps < 3
+	then []
+	else getDirection (nth 0 ps) (nth 1 ps) (nth 2 ps) : getAllDirections (tail ps)
+
+
 -- Ex 8
 data MyTree a = MyNode a (MyTree a) (MyTree a)
             | Empty
