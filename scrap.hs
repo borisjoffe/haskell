@@ -12,15 +12,24 @@ data Point p = Point {
 		, yCoord :: Int
 	} deriving (Show, Eq)
 
-data Direction d = TurnsLeft | TurnsRight | StraightLine
+data Direction d = CCW | CW | Collinear
 	deriving (Show)
 
 -- Ex 10
 getDirection :: Point a -> Point b -> Point c -> Direction d
 getDirection (Point x_a y_a) (Point x_b y_b) (Point x_c y_c)
-	| x_a < x_c  = TurnsRight
-	| x_a > x_c  = TurnsLeft
-	| x_a == x_c = StraightLine
+	| z > 0  = CCW
+	| z < 0  = CW
+	| z == 0 = Collinear
+	where
+		-- vector AB
+		x_ab = x_b - x_a
+		y_ab = y_b - y_a
+		-- vector BC
+		x_bc = x_c - x_b
+		y_bc = y_c - y_b
+		-- cross product
+		z = (x_ab * y_bc) - (y_ab * x_bc)
 
 -- Ex 11
 nth :: Int -> [a] -> a
@@ -31,6 +40,8 @@ getAllDirections ps =
 	if length ps < 3
 	then []
 	else getDirection (nth 0 ps) (nth 1 ps) (nth 2 ps) : getAllDirections (tail ps)
+
+-- Ex 12
 
 
 -- Ex 8
