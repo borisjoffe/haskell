@@ -43,6 +43,29 @@ getAllDirections ps =
 
 -- Ex 12
 
+lowestYThenLowestX :: Point a -> Point b -> Ordering
+lowestYThenLowestX a b =
+	if compareY == EQ
+	then compare (xCoord a) (xCoord b)
+	else compareY
+	where
+		compareY = compare (yCoord a) (yCoord b)
+
+uniq ps = undefined
+getPolarAngleWithXAxis = undefined
+
+-- Get point with minimum y coordinate; if multiple points have the minimum, use the one with smallest x
+getLowestY :: [Point a] -> Point a
+getLowestY ps =
+	minimumBy (lowestYThenLowestX) ps
+
+grahamScan :: [Point a] -> [Point a]
+grahamScan ps =
+	p = getLowestY ps
+	restOfPs = filter (not p) (uniq ps)
+	sortedByPolarAngle = sortBy getPolarAngleWithXAxis restOfPs
+
+
 
 -- Ex 8
 data MyTree a = MyNode a (MyTree a) (MyTree a)
