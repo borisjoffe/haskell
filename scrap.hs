@@ -51,20 +51,58 @@ lowestYThenLowestX a b =
 	where
 		compareY = compare (yCoord a) (yCoord b)
 
-uniq ps = undefined
-getPolarAngleWithXAxis = undefined
+-- TODO: implement
+uniq :: [Point a] -> [Point a]
+uniq ps = ps
+
+
+{-
+
+ -      o
+ -     *|
+ -   *  |  y
+ - *    |
+-0---------------
+     x
+
+bigger y -> increases angle; bigger x -> decreases angle
+-}
+getRelativePolarAngleWithXAxis :: Point a -> Double
+getRelativePolarAngleWithXAxis p = yCoord p / xCoord p
 
 -- Get point with minimum y coordinate; if multiple points have the minimum, use the one with smallest x
 getLowestY :: [Point a] -> Point a
 getLowestY ps =
 	minimumBy (lowestYThenLowestX) ps
 
+isCcw :: PointTriple pt -> Bool
+isCcw pt = getDirection' pt == CCW
+
+{-
+a, b, c, d
+-> (a,b,c) (b,c,d)
+-> isCcw triple -> getDirection triple == CCW
+-}
+
+makeTriples :: [a] -> [[a]]
+makeTriples xs
+    | length xs < 3 = [[]] -- or [xs]???
+	| otherwise = [(nth 0 xs), (nth 1 xs), (nth 2 xs)] : makeTriples (tail xs)
+
+
+getHullFromDirections :: [Point a] -> [Point a]
+getHullFromDirections ps =
+    -- when 3 points are CCW, add points to hull, if collinear, discard middle point
+    -- filter points that are not ccw out
+    filter (isCcw) (makeTriples ps)
+
 grahamScan :: [Point a] -> [Point a]
 grahamScan ps =
-	p = getLowestY ps
-	restOfPs = filter (not p) (uniq ps)
-	sortedByPolarAngle = sortBy getPolarAngleWithXAxis restOfPs
-
+    getHullFromDirections (lowestPoint : pointsSortedByPolarAngle)
+    where
+        lowestPoint = getLowestY ps
+        pointsSortedByPolarAngle = sortBy getRelativePolarAngleWithXAxis restOfPoints
+        restOfPoints = filter (not lowestPoint) (uniq ps)
 
 
 -- Ex 8
