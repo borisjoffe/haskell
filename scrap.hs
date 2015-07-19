@@ -3,20 +3,27 @@
 -- Chapter 3 Part 2
 -------------------
 import Data.List
+import Data.Ord
 
 -- Ex 9 - 12
 
 -- Ex 9
-data Point p = Point {
-		  xCoord :: Int
-		, yCoord :: Int
+data Point = Point {
+		  xCoord :: Double
+		, yCoord :: Double
 	} deriving (Show, Eq)
 
-data Direction d = CCW | CW | Collinear
-	deriving (Show)
+data PointTriple = PointTriple Point Point Point
+-- data PointTriple pt = PointTriple (Point a) (Point b) (Point c)
+-- data PointTriple pt = PointTriple (Point x_a y_a) (Point x_b y_b) (Point x_c y_c)
+    deriving (Show)
+
+data Direction = CCW | CW | Collinear
+	deriving (Show, Eq)
 
 -- Ex 10
-getDirection :: Point a -> Point b -> Point c -> Direction d
+
+getDirection :: Point -> Point -> Point -> Direction
 getDirection (Point x_a y_a) (Point x_b y_b) (Point x_c y_c)
 	| z > 0  = CCW
 	| z < 0  = CW
@@ -31,11 +38,19 @@ getDirection (Point x_a y_a) (Point x_b y_b) (Point x_c y_c)
 		-- cross product
 		z = (x_ab * y_bc) - (y_ab * x_bc)
 
+getDirection' :: PointTriple -> Direction
+getDirection' pt =
+    getDirection a b c
+	where
+        a = nth 0 pt
+        b = nth 1 pt
+        c = nth 2 pt
+
 -- Ex 11
 nth :: Int -> [a] -> a
 nth num xs = head (drop num xs)
 
-getAllDirections :: [Point a] -> [Direction d]
+getAllDirections :: [Point] -> [Direction]
 getAllDirections ps =
 	if length ps < 3
 	then []
@@ -43,7 +58,7 @@ getAllDirections ps =
 
 -- Ex 12
 
-lowestYThenLowestX :: Point a -> Point b -> Ordering
+lowestYThenLowestX :: Point -> Point -> Ordering
 lowestYThenLowestX a b =
 	if compareY == EQ
 	then compare (xCoord a) (xCoord b)
@@ -52,7 +67,7 @@ lowestYThenLowestX a b =
 		compareY = compare (yCoord a) (yCoord b)
 
 -- TODO: implement
-uniq :: [Point a] -> [Point a]
+uniq :: [Point] -> [Point]
 uniq ps = ps
 
 
@@ -67,15 +82,15 @@ uniq ps = ps
 
 bigger y -> increases angle; bigger x -> decreases angle
 -}
-getRelativePolarAngleWithXAxis :: Point a -> Double
+getRelativePolarAngleWithXAxis :: Point -> Double
 getRelativePolarAngleWithXAxis p = yCoord p / xCoord p
 
 -- Get point with minimum y coordinate; if multiple points have the minimum, use the one with smallest x
-getLowestY :: [Point a] -> Point a
+getLowestY :: [Point] -> Point
 getLowestY ps =
 	minimumBy (lowestYThenLowestX) ps
 
-isCcw :: PointTriple pt -> Bool
+isCcw :: PointTriple -> Bool
 isCcw pt = getDirection' pt == CCW
 
 {-
@@ -90,19 +105,20 @@ makeTriples xs
 	| otherwise = [(nth 0 xs), (nth 1 xs), (nth 2 xs)] : makeTriples (tail xs)
 
 
-getHullFromDirections :: [Point a] -> [Point a]
+getHullFromDirections :: [Point] -> [Point]
 getHullFromDirections ps =
     -- when 3 points are CCW, add points to hull, if collinear, discard middle point
     -- filter points that are not ccw out
     filter (isCcw) (makeTriples ps)
 
-grahamScan :: [Point a] -> [Point a]
+grahamScan :: [Point] -> [Point]
 grahamScan ps =
     getHullFromDirections (lowestPoint : pointsSortedByPolarAngle)
     where
         lowestPoint = getLowestY ps
-        pointsSortedByPolarAngle = sortBy getRelativePolarAngleWithXAxis restOfPoints
-        restOfPoints = filter (not lowestPoint) (uniq ps)
+        pointsSortedByPolarAngle = sortBy (comparing getRelativePolarAngleWithXAxis) restOfPoints
+        restOfPoints = filter (not . isLowestPoint) (uniq ps)
+        isLowestPoint p = (p == lowestPoint)
 
 
 -- Ex 8
