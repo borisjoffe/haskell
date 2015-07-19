@@ -13,10 +13,11 @@ data Point = Point {
 		, yCoord :: Double
 	} deriving (Show, Eq)
 
-data PointTriple = PointTriple Point Point Point
--- data PointTriple pt = PointTriple (Point a) (Point b) (Point c)
--- data PointTriple pt = PointTriple (Point x_a y_a) (Point x_b y_b) (Point x_c y_c)
-    deriving (Show)
+data PointTriple = PointTriple {
+          firstPoint  :: Point
+        , secondPoint :: Point
+        , thirdPoint  :: Point
+    } deriving (Show)
 
 data Direction = CCW | CW | Collinear
 	deriving (Show, Eq)
@@ -39,12 +40,8 @@ getDirection (Point x_a y_a) (Point x_b y_b) (Point x_c y_c)
 		z = (x_ab * y_bc) - (y_ab * x_bc)
 
 getDirection' :: PointTriple -> Direction
-getDirection' pt =
-    getDirection a b c
-	where
-        a = nth 0 pt
-        b = nth 1 pt
-        c = nth 2 pt
+getDirection' (PointTriple p1 p2 p3) =
+    getDirection p1 p2 p3
 
 -- Ex 11
 nth :: Int -> [a] -> a
@@ -104,16 +101,26 @@ makeTriples xs
     | length xs < 3 = [[]] -- or [xs]???
 	| otherwise = [(nth 0 xs), (nth 1 xs), (nth 2 xs)] : makeTriples (tail xs)
 
+pointTriplesFromPoints :: [Point] -> [PointTriple]
+pointTriplesFromPoints ps
+    | length ps < 3 = []
+	| otherwise = (PointTriple (nth 0 ps) (nth 1 ps) (nth 2 ps)) : pointTriplesFromPoints (tail ps)
 
-getHullFromDirections :: [Point] -> [Point]
-getHullFromDirections ps =
+pointsFromPointTriples :: [PointTriple] -> [Point]
+pointsFromPointTriples [] = []
+pointsFromPointTriples (pt : pts) = [firstPoint pt] ++ [secondPoint pt] ++ [thirdPoint pt] ++ pointsFromPointTriples pts
+
+getHullFromPoints :: [Point] -> [Point]
+getHullFromPoints ps =
     -- when 3 points are CCW, add points to hull, if collinear, discard middle point
     -- filter points that are not ccw out
-    filter (isCcw) (makeTriples ps)
+    uniq (pointsFromPointTriples pointTriples)
+    where
+        pointTriples = filter (isCcw) (pointTriplesFromPoints ps)
 
 grahamScan :: [Point] -> [Point]
 grahamScan ps =
-    getHullFromDirections (lowestPoint : pointsSortedByPolarAngle)
+    getHullFromPoints (lowestPoint : pointsSortedByPolarAngle)
     where
         lowestPoint = getLowestY ps
         pointsSortedByPolarAngle = sortBy (comparing getRelativePolarAngleWithXAxis) restOfPoints
