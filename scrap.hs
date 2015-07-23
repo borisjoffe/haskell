@@ -118,6 +118,12 @@ getHullFromPoints ps =
     where
         ccwPointTriples = filter (isCcw) (pointTriplesFromPoints ps)
 
+ps = [p00]
+lowestPoint = getLowestY ps
+pointsSortedByPolarAngle = sortBy (comparing getRelativePolarAngleWithXAxis) restOfPoints
+restOfPoints = filter (not . isLowestPoint) (uniq ps)
+isLowestPoint p = (p == lowestPoint)
+
 grahamScan :: [Point] -> [Point]
 grahamScan ps =
     getHullFromPoints (lowestPoint : pointsSortedByPolarAngle)
@@ -133,8 +139,20 @@ p10 = Point 1 0
 p11 = Point 1 1
 testGrahamScan =
     do
-        assert (grahamScan [p00])
-            [p00]
+        -- most basic hull
+        assert (grahamScan [p01, p10, p00])
+            [p00, p10, p01]
+        -- basic hull
+        assert (grahamScan [p11, p01, p10, p00])
+            -- TODO: fix, this fails - extra triple is getting added somewhere
+            [p00, p10, p11, p01]
+        -- add different types of points that should be excluded from the hull
+        -- check for duplicates
+        where
+            p00 = Point 0 0
+            p01 = Point 0 1
+            p10 = Point 1 0
+            p11 = Point 1 1
 
 
 -- TODO: add test
