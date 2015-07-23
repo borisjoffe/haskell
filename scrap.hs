@@ -127,6 +127,15 @@ grahamScan ps =
         restOfPoints = filter (not . isLowestPoint) (uniq ps)
         isLowestPoint p = (p == lowestPoint)
 
+p00 = Point 0 0
+p01 = Point 0 1
+p10 = Point 1 0
+p11 = Point 1 1
+testGrahamScan =
+    do
+        assert (grahamScan [p00])
+            [p00]
+
 
 -- TODO: add test
 
